@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>{{job.title}} - Sangrai Kopi Careers</title>
+    {% include 'bootstrap.html' %}
+    <style>
+      #container {
+          max-width: 952px;
+          margin: 0 auto 0 auto;
+        } 
+    </style>
+  </head>
+  <body>
+    {% include 'nav.html' %}
+    {% include 'banner.html' %}
+    <div id="container">
+      <h3 class="mt-5 mb-3">{{job.title}}</h3>
+      <p class="lead mt-0">{{job.location}}</p> 
+      <h3>Responsibilities</h3>
+      <ul>
+        {% for line in job.responsibilities.split("\n") %}
+        <li>{{line}}</li>
+        {% endfor %}
+      </ul>
+      <h3>Requirements</h3>
+      <ul>
+        {% for line in job.requirements.split("\n") %}
+        <li>{{line}}</li>
+        {% endfor %}
+      </ul>
+      <h3>Salary</h3>
+      <p class="mb-5">{{job.currency}} {{job.salary}}</p>
+      {% include 'footer.html' %}
+    </div>
+  </body>
+</html>
