@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Application Submitted</title>   
+    {% include 'bootstrap.html' %}
+    <style>
+      #container {
+        max-width: 952px;
+        margin: 0 auto 0 auto;
+      } 
+    </style>
+  </head>
+  <body>
+    {% include 'nav.html' %}
+    {% include 'banner.html' %}
+    <div id="container">
+      <h1 class="mt-2 mb-4" style="text-align: center">Sangrai Kopi Careers</h1>
+
+        <h4 class="mb-4">Your application for the role of "{{job['title']}}" 
+            at Sangrai Kopi has been submitted.            
+        </h4>
+        <b>Full Name</b>
+        <div class="mb-2">{{application['full_name']}}</div>
+    
+        <b>Email</b>
+        <div class="mb-2">{{application['email']}}</div>
+
+        <b>LinkedIn</b>
+        <div class="mb-2">{{application['linkedin_url']}}</div>
+    
+        <b>Education</b>
+        <div class="mb-2">{{application['education']}}</div>
+
+        <b>Work Experience</b>
+        <div class="mb-2">{{application['work_experience']}}</div>
+
+        <b>Resume URL</b>
+        <div class="mb-2">{{application['resume_url']}}</div>
+    </div>
+    {% include 'footer.html' %}
+  </body>
+
+  
+</html>
