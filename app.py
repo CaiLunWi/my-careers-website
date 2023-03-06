@@ -9,9 +9,10 @@ jobs = load_jobs_from_db()
 def hello_world():
   return render_template("home.html", jobs=jobs, company_name='Sangrai Kopi')
 
-@app.route("/api/jobs")
-def list_jobs():
-  return jsonify(jobs)
+@app.route("/api/job/<job_id>")
+def show_job_json(job_id):
+  job = load_job_from_db(job_id)
+  return jsonify(job)
 
 @app.route("/jobs/<job_id>")
 def show_job(job_id):
