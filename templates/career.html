@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Job Details</title>
+    {% include 'bootstrap.html' %}
+    <style>
+      #container {
+          max-width: 952px;
+          margin: 0 auto 0 auto;
+        } 
+    </style>
+</head>
+<body>
+  {% include 'nav.html' %}
+  {% include 'banner.html' %}
+  <div id="container">
+      <h2 class="mt-4 mb-3">Open Positions</h2>
+      <div>
+        {% for job in jobs %}
+          {% include 'jobitem.html' %}
+        {% endfor %}
+      </div>
+      <div style="height: 150px"></div>
+      <div class="mt-5" style="text-align: center;">      
+        <button class="btn btn-primary btn-lg" style="background-color: rgb(92, 34, 7)">Contact Us</button>
+      </div>
+      {% include 'footer.html' %}
+  </div>
+</body>
+</html>

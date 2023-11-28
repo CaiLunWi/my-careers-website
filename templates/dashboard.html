@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard</title>
+  {% include 'bootstrap.html' %}
+  <style>
+    body {
+      padding: 60px 0; /* Adjust padding as needed */
+      background-color: #f8f9fa; /* Background color */
+    }
+
+    .dashboard-container {
+      max-width: 800px;
+      margin: auto;
+      background-color: #fff;
+      padding: 20px;
+      border-radius: 5px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+  </style>
+</head>
+<body>
+  {% include 'nav.html' %}
+
+  <div class="container dashboard-container">
+    <h2 class="text-center">Dashboard</h2>
+    <p>Welcome, {{ user.username }}!</p>
+
+    <div class="card">
+      <div class="card-body">
+        <h5 class="card-title">User Information</h5>
+        <p class="card-text"><strong>Username:</strong> {{ user.username }}</p>
+        <p class="card-text"><strong>Email:</strong> {{ user.email }}</p>
+        <p class="card-text"><strong>User Role:</strong> {{ user.user_role }}</p>
+      </div>
+    </div>
+
+    <a href="/logout" class="btn btn-danger mt-3">Logout</a>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
