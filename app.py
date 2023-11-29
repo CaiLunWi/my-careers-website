@@ -1,5 +1,5 @@
 from flask import Flask, render_template, jsonify, request, flash, redirect
-from database import load_jobs_from_db, load_job_from_db, add_application_to_db, register_user, load_users_from_db, get_user_by_id, get_user_by_username, load_coffee_from_db, add_to_cart, get_cart, delete_cart_item
+from database import load_jobs_from_db, load_job_from_db, add_application_to_db, register_user, load_users_from_db, get_user_by_id, get_user_by_username, load_coffee_from_db, add_to_cart, get_cart, delete_cart_item, load_applications_from_db
 from flask_login import LoginManager, login_user, login_required, logout_user, current_user, UserMixin
 
 
@@ -40,10 +40,15 @@ def login():
         if user_data and user_data['password'] == password:
             user = User(user_data['user_id'], user_data['username'], user_data['email'], user_data['user_role'])
             login_user(user)
-            flash('Login successful!', 'success')
-            return render_template('dashboard.html', user=current_user)
+
+            # Check if the user is an admin and redirect accordingly
+            if user.user_role == '1':
+                return redirect('/admin/dashboard')
+            else:
+                return redirect('/dashboard')
 
     return render_template('login.html')
+
 
 @app.route('/dashboard')
 @login_required
@@ -69,6 +74,20 @@ def dashboard():
         detailed_cart_items.append(detailed_cart_item)
     return render_template('dashboard.html', user=current_user, cart_items=detailed_cart_items)
 
+@app.route('/admin/dashboard')
+@login_required
+def admin_dashboard():
+    # Check if the current user is an admin
+    if current_user.user_role != '1':
+        return render_template('error.html', message='Permission denied.')
+
+    # Fetch data for the admin dashboard
+    coffee_data = load_coffee_from_db()
+    job_data = load_jobs_from_db()
+    applications_data = load_applications_from_db()
+    users_data = load_users_from_db()
+
+    return render_template('admin_dashboard.html', user=current_user, coffee_data=coffee_data, job_data=job_data, applications_data=applications_data, users_data=users_data)
 
 @app.route('/logout')
 @login_required

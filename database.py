@@ -56,6 +56,15 @@ def add_application_to_db(id, data):
                    {"job_id": job_id, "full_name": full_name, "email": email, "linkedin_url": linkedin_url, "education": education, "work_experience": work_experience, "resume_url": resume_url}
                  ])
 
+def load_applications_from_db():
+  with engine.connect() as conn:
+    result = conn.execute(text("SELECT * FROM applications"))
+    applications = []
+    for row in result.all():
+        row_as_dict = row._mapping
+        applications.append(dict(row_as_dict))
+  return applications
+
 def register_user(data):
   with engine.connect() as conn:
       # Insert the user information into the Users table

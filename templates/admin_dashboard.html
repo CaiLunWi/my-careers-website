@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard</title>
+    <!-- Add your CSS links or styles here -->
+</head>
+<body>
+    <header>
+        <h1>Welcome, {{ user.username }} (Admin)!</h1>
+    </header>
+
+    <main>
+        <section>
+            <h2>Coffee Data</h2>
+            <ul>
+                {% for coffee_item in coffee_data %}
+                    <li>{{ coffee_item.coffee_name }} - Price: {{ coffee_item.price }}</li>
+                {% endfor %}
+            </ul>
+        </section>
+
+        <section>
+            <h2>Job Data</h2>
+            <ul>
+                {% for job_item in job_data %}
+                    <li>{{ job_item.job_title }} - Company: {{ job_item.company_name }}</li>
+                {% endfor %}
+            </ul>
+        </section>
+
+        <section>
+            <h2>Applications Data</h2>
+            <ul>
+                {% for application_item in applications_data %}
+                    <li>{{ application_item.full_name }} - Job: {{ application_item.job_title }}</li>
+                {% endfor %}
+            </ul>
+        </section>
+
+        <section>
+            <h2>Users Data</h2>
+            <ul>
+                {% for user_item in users_data %}
+                    <li>{{ user_item.username }} - Email: {{ user_item.email }}</li>
+                {% endfor %}
+            </ul>
+        </section>
+    </main>
+
+    <footer>
+        <!-- Add your footer content here -->
+    </footer>
+
+    <!-- Add your JavaScript links or scripts here -->
+</body>
+</html>
+
