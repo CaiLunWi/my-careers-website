@@ -133,6 +133,24 @@ def delete_cart_item(user_id, cart_item_id):
       query = text("DELETE FROM shoppingCarts WHERE user_id = :user_id AND cart_id = :cart_id")
       conn.execute(query, {"user_id": user_id, "cart_id": cart_item_id})
 
+def create_order(order_data):
+  with engine.connect() as conn:
+      query = text("INSERT INTO orders (user_id, order_date, total_amount) VALUES (:user_id, :order_date, :total_amount)")
+      conn.execute(query, order_data)
+
+
+def clear_cart(user_id):
+  with engine.connect() as conn:
+      query = text("DELETE FROM shoppingCarts WHERE user_id = :user_id")
+      conn.execute(query, {"user_id": user_id})
+
+def get_user_orders(user_id):
+  with engine.connect() as conn:
+    result = conn.execute(text("SELECT * FROM orders WHERE user_id = :user_id"), {"user_id": user_id})
+    orders = [dict(row._mapping) for row in result.all()]
+  return orders
+
+
     
 
         

@@ -1,6 +1,7 @@
 from flask import Flask, render_template, jsonify, request, flash, redirect
-from database import load_jobs_from_db, load_job_from_db, add_application_to_db, register_user, load_users_from_db, get_user_by_id, get_user_by_username, load_coffee_from_db, add_to_cart, get_cart, delete_cart_item, load_applications_from_db
+from database import load_jobs_from_db, load_job_from_db, add_application_to_db, register_user, load_users_from_db, get_user_by_id, get_user_by_username, load_coffee_from_db, add_to_cart, get_cart, delete_cart_item, load_applications_from_db, create_order, clear_cart, get_user_orders
 from flask_login import LoginManager, login_user, login_required, logout_user, current_user, UserMixin
+from datetime import datetime
 
 
 app = Flask(__name__)
@@ -180,6 +181,46 @@ def register_user_route():
   data = request.form
   register_user(data)
   return render_template('registration_success.html')
+
+
+
+@app.route('/order')
+@login_required
+def order():
+    # Get the current user's cart items
+    cart_items = get_cart(current_user.id)
+
+    try:
+        # Replace 'coffee_id' and 'quantity' with the actual keys in your cart_items dictionary
+      total_amount = sum(cart_item['quantity'] * load_coffee_from_db(cart_item['coffee_id'])[0]['price'] for cart_item in cart_items)
+        # Create an order in the database
+        
+      order_data = {
+            'user_id': current_user.id,
+            'order_date': datetime.now(),
+            'total_amount': total_amount
+        }
+      create_order(order_data)
+
+        # Clear the user's cart
+      clear_cart(current_user.id)
+
+      return render_template('order_success.html', total_amount=total_amount)
+    except Exception as e:
+        # Handle the exception, you can print or log the error for debugging
+        print(f"Error in order route: {e}")
+        return render_template('order_failure.html')
+
+
+
+@app.route('/orders')
+@login_required
+def orders():
+    # Get all orders for the current user
+    user_orders = get_user_orders(current_user.id)
+
+    return render_template('orders.html', user_orders=user_orders)
+
         
 
 

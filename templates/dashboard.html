@@ -2,81 +2,92 @@
 <html lang="en">
 
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Dashboard</title>
-  {% include 'bootstrap.html' %}
-  <style>
-    body {
-      padding: 60px 0;
-      /* Adjust padding as needed */
-      background-color: #f8f9fa;
-      /* Background color */
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+    {% include 'bootstrap.html' %}
+    <style>
+        body {
+            padding: 60px 0;
+            /* Adjust padding as needed */
+            background-color: #f8f9fa;
+            /* Background color */
+        }
 
-    .dashboard-container {
-      max-width: 800px;
-      margin: auto;
-      background-color: #fff;
-      padding: 20px;
-      border-radius: 5px;
-      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    }
+        .dashboard-container {
+            max-width: 800px;
+            margin: auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
 
-    .cart-item {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 10px;
-      padding: 10px;
-      border: 1px solid #ccc;
-      border-radius: 5px;
-    }
+        .cart-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
 
-    .cart-item img {
-      max-width: 50px;
-      max-height: 50px;
-      margin-right: 10px;
-    }
-  </style>
+        .cart-item img {
+            max-width: 50px;
+            max-height: 50px;
+            margin-right: 10px;
+        }
+
+        .btn-container {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+    </style>
 </head>
 
 <body>
-  {% include 'nav.html' %}
+    {% include 'nav.html' %}
 
-  <div class="container dashboard-container">
-    <h2 class="text-center">Dashboard</h2>
-    <p>Welcome, {{ user.username }}!</p>
+    <div class="container dashboard-container">
+        <h2 class="text-center">Dashboard</h2>
+        <p>Welcome, {{ user.username }}!</p>
 
-    <div class="card">
-      <div class="card-body">
-        <h5 class="card-title">User Information</h5>
-        <p class="card-text"><strong>Username:</strong> {{ user.username }}</p>
-        <p class="card-text"><strong>Email:</strong> {{ user.email }}</p>
-        <p class="card-text"><strong>User Role:</strong> {{ user.user_role }}</p>
-      </div>
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">User Information</h5>
+                <p class="card-text"><strong>Username:</strong> {{ user.username }}</p>
+                <p class="card-text"><strong>Email:</strong> {{ user.email }}</p>
+                <p class="card-text"><strong>User Role:</strong> {{ user.user_role }}</p>
+            </div>
+        </div>
+
+        <h3 class="mt-4">Shopping Cart</h3>
+        {% for cart_item in cart_items %}
+        <div class="card cart-item">
+            <img src="{{ cart_item.image_url }}" class="card-img-top" alt="{{ cart_item.coffee_name }}">
+            <div class="card-body">
+                <h5 class="card-title">{{ cart_item.coffee_name }}</h5>
+                <p class="card-text">Price: ${{ cart_item.price }}</p>
+                <p class="card-text">Quantity: {{ cart_item.quantity }}</p>
+            </div>
+            <!-- Add a form for the delete button -->
+          <form action="{{ url_for('delete_cart_item_route', cart_item_id=cart_item.cart_id) }}" method="post">
+                <button type="submit" class="btn btn-danger">Delete</button>
+            </form>
+        </div>
+        {% endfor %}
+
+        <!-- Links for ordering items and viewing orders -->
+        <div class="btn-container">
+            <a href="{{ url_for('order') }}" class="btn btn-primary">Order Items</a>
+            <a href="{{ url_for('orders') }}" class="btn btn-success">View Orders</a>
+        </div>
+
     </div>
 
-    <h3 class="mt-4">Shopping Cart</h3>
-    {% for cart_item in cart_items %}
-      <div class="card">
-        <img src="{{ cart_item.image_url }}" class="card-img-top" alt="{{ cart_item.coffee_name }}">
-        <div class="card-body">
-          <h5 class="card-title">{{ cart_item.coffee_name }}</h5>
-          <p class="card-text">Price: ${{ cart_item.price }}</p>
-          <p class="card-text">Quantity: {{ cart_item.quantity }}</p>
-          <!-- Add a form for the delete button -->
-          <form action="{{ url_for('delete_cart_item_route',   cart_item_id=cart_item.cart_id) }}" method="post">
-              <button type="submit" class="btn btn-danger">Delete</button>
-          </form>
-        </div>
-      </div>
-    {% endfor %}
-
-    <a href="/logout" class="btn btn-danger mt-3">Logout</a>
-  </div>
-
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 
 </html>

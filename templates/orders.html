@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Orders</title>
+</head>
+<body>
+    <h1>Your Orders</h1>
+    <ul>
+        {% for order in user_orders %}
+            <li>
+                Order ID: {{ order['order_id'] }}<br>
+                Order Date: {{ order['order_date'] }}<br>
+                Total Amount: ${{ order['total_amount'] }}
+            </li>
+        {% endfor %}
+    </ul>
+</body>
+</html>
