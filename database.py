@@ -121,8 +121,8 @@ def get_cart(user_id):
 
 def delete_cart_item(user_id, cart_item_id):
   with engine.connect() as conn:
-      query = text("DELETE FROM shoppingCarts WHERE user_id = :user_id AND cart_item_id = :cart_item_id")
-      conn.execute(query, {"user_id": user_id, "cart_item_id": cart_item_id})
+      query = text("DELETE FROM shoppingCarts WHERE user_id = :user_id AND cart_id = :cart_id")
+      conn.execute(query, {"user_id": user_id, "cart_id": cart_item_id})
 
     
 

@@ -1,5 +1,5 @@
 from flask import Flask, render_template, jsonify, request, flash, redirect
-from database import load_jobs_from_db, load_job_from_db, add_application_to_db, register_user, load_users_from_db, get_user_by_id, get_user_by_username, load_coffee_from_db, add_to_cart, get_cart
+from database import load_jobs_from_db, load_job_from_db, add_application_to_db, register_user, load_users_from_db, get_user_by_id, get_user_by_username, load_coffee_from_db, add_to_cart, get_cart, delete_cart_item
 from flask_login import LoginManager, login_user, login_required, logout_user, current_user, UserMixin
 
 
@@ -126,12 +126,14 @@ def add_to_cart_route(coffee_id, quantity):
     # Handle GET request if needed (e.g., show information about the added item)
     return render_template('add_to_cart.html', coffee_id=coffee_id, quantity=quantity)
 
-@app.route('/delete_cart_item/<int:cart_item_id>', methods=['GET', 'POST'])
+@app.route('/delete_cart_item/<int:cart_item_id>', methods=['POST'])
 @login_required
-def delete_cart_item(cart_item_id):
+def delete_cart_item_route(cart_item_id):
     # Call a function to delete the item from the cart based on the cart_item_id
     delete_cart_item(current_user.id, cart_item_id)
     flash('Item removed from your cart!', 'success')
+
+    # Redirect to the dashboard page to show the updated cart
     return redirect('/dashboard')
 
 @app.route("/api/job/<job_id>")
