@@ -89,14 +89,41 @@ def get_user_by_username(username):
       else:
         return dict(rows[0]._mapping)
 
-def load_coffee_from_db():
+def load_coffee_from_db(coffee_id=None):
   with engine.connect() as conn:
-    result = conn.execute(text("select * from coffee"))
+    if coffee_id is not None:
+        # If coffee_id is provided, fetch details for a specific coffee item
+        result = conn.execute(text("SELECT * FROM coffee WHERE coffee_id = :coffee_id"), {"coffee_id": coffee_id})
+    else:
+        # If no coffee_id is provided, fetch details for all coffee items
+        result = conn.execute(text("SELECT * FROM coffee"))
+
     coffee = []
     for row in result.all():
         row_as_dict = row._mapping
         coffee.append(dict(row_as_dict))
-    return coffee
+  return coffee
+
+
+def add_to_cart(user_id, coffee_id, quantity):
+  with engine.connect() as conn:
+      query = text("INSERT INTO shoppingCarts (user_id, coffee_id, quantity) VALUES (:user_id, :coffee_id, :quantity)")
+      conn.execute(query, {"user_id": user_id, "coffee_id": coffee_id, "quantity": quantity})
+
+def get_cart(user_id):
+  with engine.connect() as conn:
+      result = conn.execute(text("SELECT * FROM shoppingCarts WHERE user_id = :user_id"), dict(user_id=user_id))
+      cart_items = []
+      for row in result.all():
+          row_as_dict = row._mapping
+          cart_items.append(dict(row_as_dict))
+      return cart_items
+
+def delete_cart_item(user_id, cart_item_id):
+  with engine.connect() as conn:
+      query = text("DELETE FROM shoppingCarts WHERE user_id = :user_id AND cart_item_id = :cart_item_id")
+      conn.execute(query, {"user_id": user_id, "cart_item_id": cart_item_id})
+
     
 
         

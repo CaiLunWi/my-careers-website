@@ -31,7 +31,7 @@
       height: auto;
     }
 
-    .add-to-cart-btn {
+    .add-to-cart-form {
       margin-top: 10px;
     }
   </style>
@@ -40,17 +40,43 @@
   {% include 'nav.html' %}
 
   <div class="container coffee-container">
-    {% for coffee in coffee %}
+    {% for coffee_item in coffee %}
       <div class="card coffee-card">
-        <img src="{{ coffee.image_url }}" alt="{{ coffee.coffee_name }}" class="coffee-image">
-        <h5 class="card-title">{{ coffee.coffee_name }}</h5>
-        <p class="card-text">{{ coffee.description }}</p>
-        <p class="card-text"><strong>Price:</strong> ${{ coffee.price }}</p>
-        <p class="card-text"><strong>Stock Quantity:</strong> {{ coffee.stock_quantity }}</p>
-        <button class="btn btn-primary add-to-cart-btn">Add to Cart</button>
+        <img src="{{ coffee_item.image_url }}" alt="{{ coffee_item.coffee_name }}" class="coffee-image">
+        <h5 class="card-title">{{ coffee_item.coffee_name }}</h5>
+        <p class="card-text">{{ coffee_item.description }}</p>
+        <p class="card-text"><strong>Price:</strong> ${{ coffee_item.price }}</p>
+        <p class="card-text"><strong>Stock Quantity:</strong> {{ coffee_item.stock_quantity }}</p>
+
+        <!-- Add to Cart Form -->
+        <form class="add-to-cart-form" method="POST" action="/add_to_cart/{{ coffee_item.coffee_id }}/1">
+            <input type="hidden" name="coffee_id" value="{{ coffee_item.coffee_id }}">
+            <label for="quantity">Quantity:</label>
+            <input type="number" name="quantity" value="1" min="1">
+            <button class="btn btn-primary add-to-cart-btn">Add to Cart</button>
+        </form>
       </div>
     {% endfor %}
   </div>
+
+  <script>
+    function addToCart(coffeeId, quantity) {
+      fetch(`/add_to_cart/${coffeeId}/${quantity}`)
+        .then(response => {
+          if (response.ok) {
+            // Optionally handle success, e.g., update UI
+            console.log('Item added to cart successfully!');
+            // You can redirect to the dashboard or any other page here if needed
+          } else {
+            // Optionally handle errors
+            console.error('Failed to add item to cart.');
+          }
+        })
+        .catch(error => {
+          console.error('Error:', error);
+        });
+    }
+  </script>
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>

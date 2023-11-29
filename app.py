@@ -1,5 +1,5 @@
-from flask import Flask, render_template, jsonify, request, flash
-from database import load_jobs_from_db, load_job_from_db, add_application_to_db, register_user, load_users_from_db, get_user_by_id, get_user_by_username, load_coffee_from_db
+from flask import Flask, render_template, jsonify, request, flash, redirect
+from database import load_jobs_from_db, load_job_from_db, add_application_to_db, register_user, load_users_from_db, get_user_by_id, get_user_by_username, load_coffee_from_db, add_to_cart, get_cart
 from flask_login import LoginManager, login_user, login_required, logout_user, current_user, UserMixin
 
 
@@ -11,6 +11,8 @@ login_manager.login_view = 'login'
 jobs = load_jobs_from_db()
 users = load_users_from_db()
 coffee = load_coffee_from_db()
+
+
 
 class User(UserMixin):
   def __init__(self, user_id, username, email, user_role):
@@ -47,7 +49,26 @@ def login():
 @login_required
 def dashboard():
     print("Current User:", current_user)
-    return render_template('dashboard.html', user=current_user)
+
+    # Load the cart items for the current user using the get_cart function
+    cart_items = get_cart(current_user.id)
+
+    # Fetch additional details for each coffee item in the cart
+    detailed_cart_items = []
+    for cart_item in cart_items:
+        # Assuming load_coffee_from_db returns a list, use [0] to get the first item
+        coffee_item = load_coffee_from_db(cart_item['coffee_id'])[0]
+
+        detailed_cart_item = {
+            'cart_id': cart_item['cart_id'],
+            'coffee_name': coffee_item['coffee_name'],
+            'price': coffee_item['price'],
+            'quantity': cart_item['quantity'],
+            'image_url': coffee_item['image_url']
+        }
+        detailed_cart_items.append(detailed_cart_item)
+    return render_template('dashboard.html', user=current_user, cart_items=detailed_cart_items)
+
 
 @app.route('/logout')
 @login_required
@@ -72,9 +93,46 @@ def register():
 def career():
     return render_template('career.html', jobs=jobs)
 
-@app.route('/coffee')
+@app.route('/coffee', methods=['GET', 'POST'])
 def coffee_page():
+    if request.method == 'POST':
+        if current_user.is_authenticated:
+            coffee_id = request.form.get('coffee_id')
+            quantity = int(request.form.get('quantity', 1))  # Default to 1 if quantity is not provided
+            # Add the selected coffee to the user's shopping cart
+            add_to_cart(current_user.id, coffee_id, quantity)
+
+            flash(f'Successfully added {quantity} item(s) to your cart!', 'success')
+
+            # Redirect to the coffee page or the cart page
+            return redirect('/coffee')
+
+        else:
+            flash('You must be logged in to add items to your cart. Please log in or register.', 'warning')
+            return redirect('/coffee')
+
     return render_template('coffee.html', coffee=coffee)
+
+
+@app.route('/add_to_cart/<int:coffee_id>/<int:quantity>', methods=['GET', 'POST'])
+@login_required
+def add_to_cart_route(coffee_id, quantity):
+    if request.method == 'POST':
+        user_id = current_user.id
+        add_to_cart(user_id, coffee_id, quantity)
+        flash('Item added to cart successfully!', 'success')
+        return redirect('/coffee')
+
+    # Handle GET request if needed (e.g., show information about the added item)
+    return render_template('add_to_cart.html', coffee_id=coffee_id, quantity=quantity)
+
+@app.route('/delete_cart_item/<int:cart_item_id>', methods=['GET', 'POST'])
+@login_required
+def delete_cart_item(cart_item_id):
+    # Call a function to delete the item from the cart based on the cart_item_id
+    delete_cart_item(current_user.id, cart_item_id)
+    flash('Item removed from your cart!', 'success')
+    return redirect('/dashboard')
 
 @app.route("/api/job/<job_id>")
 def show_job_json(job_id):
