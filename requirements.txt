@@ -2,9 +2,10 @@ Flask
 Gunicorn
 sqlalchemy
 pymysql
--m pip install --upgrade pip'
+-m pip install --upgrade pip
 pip install --upgrade Flask
 pip install --upgrade pip
 /opt/render/project/src/.venv/bin/python -m pip install --upgrade pip 
+'/opt/render/project/src/.venv/bin/python -m pip install --upgrade pip'
 --upgrade pip
 
