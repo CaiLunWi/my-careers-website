@@ -2,6 +2,6 @@ Flask
 Gunicorn
 sqlalchemy
 pymysql
-pip
-pip install pip
+pip==23.3.1
+
 
