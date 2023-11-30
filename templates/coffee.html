@@ -38,7 +38,13 @@
 </head>
 <body>
   {% include 'nav.html' %}
-
+  <div>
+      {% for message in flashed_messages %}
+          <div class="alert alert-info" role="alert">
+              {{ message }}
+          </div>
+      {% endfor %}
+  </div>
   <div class="container coffee-container">
     {% for coffee_item in coffee %}
       <div class="card coffee-card">
@@ -58,7 +64,6 @@
       </div>
     {% endfor %}
   </div>
-
   <script>
     function addToCart(coffeeId, quantity) {
       fetch(`/add_to_cart/${coffeeId}/${quantity}`)

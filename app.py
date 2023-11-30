@@ -1,10 +1,12 @@
-from flask import Flask, render_template, jsonify, request, flash, redirect
-from database import load_jobs_from_db, load_job_from_db, add_application_to_db, register_user, load_users_from_db, get_user_by_id, get_user_by_username, load_coffee_from_db, add_to_cart, get_cart, delete_cart_item, load_applications_from_db, create_order, clear_cart, get_user_orders
+from flask import Flask as FlaskBase, render_template, jsonify, request, flash, redirect
+from flask.helpers import get_flashed_messages
+from database import load_jobs_from_db, load_job_from_db, add_application_to_db, register_user, load_users_from_db, get_user_by_id, get_user_by_username, load_coffee_from_db, add_to_cart, get_cart, delete_cart_item, load_applications_from_db, create_order, clear_cart, get_user_orders, get_user_by_email
 from flask_login import LoginManager, login_user, login_required, logout_user, current_user, UserMixin
 from datetime import datetime
+from werkzeug.security import generate_password_hash, check_password_hash
 
 
-app = Flask(__name__)
+app = FlaskBase(__name__)
 app.config['SECRET_KEY'] = 'my_secret_key'
 login_manager = LoginManager(app)
 login_manager.login_view = 'login'
@@ -46,7 +48,7 @@ def login():
             if user.user_role == '1':
                 return redirect('/admin/dashboard')
             else:
-                return redirect('/dashboard')
+                return redirect('/')
 
     return render_template('login.html')
 
@@ -94,20 +96,15 @@ def admin_dashboard():
 @login_required
 def logout():
   logout_user()
-  flash('Logout successful!', 'success')
   return render_template('login.html')
 
 @app.route("/")
 def hello_world():
-  return render_template("home.html", jobs=jobs, company_name='Sangrai Kopi')
+  return render_template("home.html", company_name='Sangrai Kopi')
 
 @app.route('/login')
 def login_page():
     return render_template('login.html')
-
-@app.route('/register')
-def register():
-    return render_template('register.html')
   
 @app.route('/career')
 def career():
@@ -131,7 +128,7 @@ def coffee_page():
             flash('You must be logged in to add items to your cart. Please log in or register.', 'warning')
             return redirect('/coffee')
 
-    return render_template('coffee.html', coffee=coffee)
+    return render_template('coffee.html', coffee=coffee, flashed_messages=get_flashed_messages())
 
 
 @app.route('/add_to_cart/<int:coffee_id>/<int:quantity>', methods=['GET', 'POST'])
@@ -143,8 +140,7 @@ def add_to_cart_route(coffee_id, quantity):
         flash('Item added to cart successfully!', 'success')
         return redirect('/coffee')
 
-    # Handle GET request if needed (e.g., show information about the added item)
-    return render_template('add_to_cart.html', coffee_id=coffee_id, quantity=quantity)
+    
 
 @app.route('/delete_cart_item/<int:cart_item_id>', methods=['POST'])
 @login_required
@@ -176,22 +172,41 @@ def apply_for_job(job_id):
   return render_template('application_submitted.html', application=data, job=job)
   
 
-@app.route('/register', methods=['post'])
+@app.route('/register', methods=['POST'])
 def register_user_route():
-  data = request.form
-  register_user(data)
-  return render_template('registration_success.html')
+    data = request.form
 
+    # Validate password and confirm password match
+    if data['password'] != data['confirm-password']:
+        flash('Passwords do not match. Please try again.', 'danger')
+        return redirect('/register')
 
+    # Check if username is already taken
+    existing_user = get_user_by_username(data['username'])
+    if existing_user:
+        flash('Username is already taken. Please choose another one.', 'danger')
+        return redirect('/register')
+
+    # Check if email is already in use
+    existing_email = get_user_by_email(data['email'])
+    if existing_email:
+        flash('Email is already in use. Please use a different email address.', 'danger')
+        return redirect('/register')
+
+    # Register the user if validation passes
+    register_user(data)
+    return render_template('registration_success.html')
+
+@app.route('/register')
+def register():
+    return render_template('register.html')
 
 @app.route('/order')
 @login_required
 def order():
     # Get the current user's cart items
     cart_items = get_cart(current_user.id)
-
     try:
-        # Replace 'coffee_id' and 'quantity' with the actual keys in your cart_items dictionary
       total_amount = sum(cart_item['quantity'] * load_coffee_from_db(cart_item['coffee_id'])[0]['price'] for cart_item in cart_items)
         # Create an order in the database
         
@@ -207,7 +222,6 @@ def order():
 
       return render_template('order_success.html', total_amount=total_amount)
     except Exception as e:
-        # Handle the exception, you can print or log the error for debugging
         print(f"Error in order route: {e}")
         return render_template('order_failure.html')
 

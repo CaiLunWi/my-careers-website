@@ -4,17 +4,26 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Your Orders</title>
+    {% include 'bootstrap.html' %}
 </head>
 <body>
-    <h1>Your Orders</h1>
-    <ul>
-        {% for order in user_orders %}
-            <li>
-                Order ID: {{ order['order_id'] }}<br>
-                Order Date: {{ order['order_date'] }}<br>
-                Total Amount: ${{ order['total_amount'] }}
-            </li>
-        {% endfor %}
-    </ul>
+    {% include 'banner.html' %}
+    {% include 'nav.html' %}
+    <div>
+      <h1>Your Orders</h1>
+      <ul class="list-group">
+          {% for order in user_orders %}
+              <li class="list-group-item list-group-item-light">
+                  <b>Order ID: </b>{{ order['order_id'] }}
+                <br>
+                  <b>Order Date: </b>{{ order['order_date'] }}
+                <br>
+                  <b>Total Amount: </b>${{ order['total_amount'] }}
+              </li>
+          {% endfor %}
+      </ul>
+      {% include 'footer.html' %}
+    </div>
 </body>
 </html>
+

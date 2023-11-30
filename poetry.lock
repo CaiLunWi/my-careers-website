@@ -205,22 +205,22 @@ python-versions = "*"
 
 [[package]]
 name = "werkzeug"
-version = "2.2.3"
+version = "3.0.1"
 description = "The comprehensive WSGI web application library."
 category = "main"
 optional = false
-python-versions = ">=3.7"
+python-versions = ">=3.8"
 
 [package.dependencies]
 MarkupSafe = ">=2.1.1"
 
 [package.extras]
-watchdog = ["watchdog"]
+watchdog = ["watchdog (>=2.3)"]
 
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.10"
-content-hash = "028ffd7cf549567a4ad939b46a01c1baf4609dbe9c5366e49ad830093a88c488"
+content-hash = "e81532913ed4d206ff6be4ca8f036daeb89745bd314f4fbf424ea42a6a60e991"
 
 [metadata.files]
 beautifultable = []

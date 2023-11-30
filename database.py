@@ -67,7 +67,6 @@ def load_applications_from_db():
 
 def register_user(data):
   with engine.connect() as conn:
-      # Insert the user information into the Users table
       query = text("INSERT INTO users (username, email, password, user_role) VALUES (:username, :email, :password, :user_role)")
       username = data['username']
       email = data['email']
@@ -86,6 +85,19 @@ def get_user_by_id(user_id):
         return None
       else:
         return dict(rows[0]._mapping)
+
+def get_user_by_email(email):
+  with engine.connect() as conn:
+      result = conn.execute(
+          text("SELECT * FROM users WHERE email = :email"),
+          dict(email=email)
+      )
+      rows = result.all()
+      if len(rows) == 0:
+          return None
+      else:
+          return dict(rows[0]._mapping)
+
 
 def get_user_by_username(username):
   with engine.connect() as conn:
