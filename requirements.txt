@@ -3,4 +3,5 @@ Gunicorn
 sqlalchemy
 pymysql
 pip install --upgrade Flask
+pip install --upgrade pip
 
