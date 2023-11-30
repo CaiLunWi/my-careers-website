@@ -4,6 +4,6 @@ sqlalchemy
 pymysql
 pip==23.3.1
 flask_login
-werkzeug.security
+
 
 
