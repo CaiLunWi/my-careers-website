@@ -52,7 +52,6 @@ def login():
 
     return render_template('login.html')
 
-
 @app.route('/dashboard')
 @login_required
 def dashboard():
